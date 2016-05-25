@@ -96,12 +96,20 @@ function retryConnection(nextTry) {
 }
 
 function connectToDiscord() {
-    discord = new discord_io({
+    discord = new discord_io.Client({
         autorun: true,
         token: process.env.DISCORD_TOKEN
     }).on("ready", function (rawEvent) {
         api.voiceChannel = null;
+        function setInviteURL() {
+            if (!discord.inviteURL) {
+                setTimeout(setInviteURL, 1000);
+                return;
+            }
+            api.client.inviteURL = discord.inviteURL;
+        }
         api.client = {};
+        setInviteURL();
         api.client.username = discord.username;
         api.username = api.client.username;
         api.client.id = discord.id;
@@ -221,14 +229,9 @@ function connectToDiscord() {
                 });
             },
             editChannelInfo: discord.editChannelInfo,
+            /* Deprecated */
             acceptInvite: function (inviteCode, callback) {
-                if (inviteCode.indexOf("/") !== -1) {
-                    inviteCode = inviteCode.substring(inviteCode.lastIndexOf("/") + 1);
-                }
-                discord.acceptInvite(inviteCode, function (error, response) {
-                    if (!error) api.Events.emit("joinedServer", response);
-                    if (callback) callback(error, response);
-                });
+                callback("AcceptInvite is deprecated. Use the invite URL to add the bot to a server.");
             },
             createInvite: discord.createInvite,
             roles: {
@@ -624,7 +627,9 @@ function bot_cmd(args) {
             "disconnect": "Disconnect from Discord",
             "connect": "Connect to Discord",
             "reconnect": "Close and re-establish connection to Discord",
-            "join <Invitation Code>": "Join a Server with an invite code",
+            "join": "Show the URL to invite the bot to a server",
+            "say <Channel ID> <message>": "Send a message to the specified channel",
+            "list": "Lists all connected servers and their channels",
             "exit": "Shuts the bot down"
         }
         console.log(
@@ -668,23 +673,15 @@ function bot_cmd(args) {
                 process.exit();
                 break;
             case "join":
-                var inviteCode = args.splice(0, 1)[0];
-                if (!inviteCode) {
-                    console.log("No Invitation Code specified!\n\n\tUsage: bot join <Invitation Code>\n");
-                    break;
-                }
-                api.management.acceptInvite(inviteCode, function (error, resp) {
-                    if (!error) {
-                        console.log("Successfully joined Server! " + resp);
-                    } else {
-                        console.log("Error occured while joining Server: " + error);
-                    }
-                });
+				if (args.length > 0) {
+					console.log("Invite Codes are deprecated for bots.");
+				}
+                console.log("Please use the following URL to add the bot to your server:\n" + api.client.inviteURL);
                 break;
             case "say":
                 var channelID = args.splice(0, 1)[0];
                 if (isNaN(parseInt(channelID))) {
-                    console.log("No Channel ID specified!\n\n\tUsage: bot say <Invitation Code> <message>\n");
+                    console.log("No Channel ID specified!\n\n\tUsage: bot say <Channel ID> <message>\n");
                     break;
                 }
                 api.Messages.send(channelID, args.join(" "));
