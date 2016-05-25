@@ -98,9 +98,7 @@ function retryConnection(nextTry) {
 function connectToDiscord() {
     discord = new discord_io({
         autorun: true,
-        token: process.env.DISCORD_TOKEN,
-        email: process.env.DISCORD_EMAIL,
-        password: process.env.DISCORD_PASSWORD
+        token: process.env.DISCORD_TOKEN
     }).on("ready", function (rawEvent) {
         api.voiceChannel = null;
         api.client = {};
@@ -384,43 +382,26 @@ initPluginLoader();
 
 // Load commandline args as env variables
 commander.version(CURRENT_VERSION).usage("[options]")
-.option("-e, --email <Picarto Channel>", "Set the bots Login Username.")
-.option("-p, --password <Bot name>", "Set the bot's Login Password.")
-.option("-t, --token <Token>", "Use an already existing token to login.")
+.option("-t, --token <Token>", "Use token to login.")
 .parse(process.argv);
 if (commander.token) process.env.DISCORD_TOKEN = commander.token;
-if (commander.email) process.env.DISCORD_EMAIL = commander.email;
-if (commander.password) process.env.DISCORD_PASSWORD = commander.password;
 
 if (process.env.DISCORD_TOKEN) {
-    console.log("Attempting token based connection, please be patient...");
-    connectToDiscord();
-} else if (process.env.DISCORD_PASSWORD && process.env.DISCORD_EMAIL) {
-    console.log("Attempting to connect, this might take a moment. Please be patient...");
+    console.log("Attempting to log in, please wait...");
     connectToDiscord();
 } else {
-    console.log("No login information given.");
-    function readEmail() {
-        read({ prompt: "EMail: " }, function (err, email, isDefault) {
-            if (!email) {
-                readEmail();
+    console.log("No token specified.");
+    function readToken() {
+        read({ prompt: "Token: " }, function (err, token, isDefault) {
+            if (!token) {
+                readToken();
                 return;
             }
-            process.env.DISCORD_EMAIL = email;
-            readPassword();
-        });
-    }
-    function readPassword() {
-        read({ prompt: "Password: ", replace: "*", silent: true }, function (err, password, isDefault) {
-            if (!password) {
-                readPassword();
-                return;
-            }
-            process.env.DISCORD_PASSWORD = password;
+            process.env.DISCORD_TOKEN = token;
             connectToDiscord();
         });
     }
-    readEmail();
+    readToken();
 }
 
 function plugin_cmd(args) {

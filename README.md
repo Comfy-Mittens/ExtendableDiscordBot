@@ -21,7 +21,7 @@ This is an extendable bot for Discord chats. By itself it does nothing, that's w
 1. Install NodeJS with npm
 2. Use `npm install -g extendable-discord-bot` from a command prompt or terminal
 3. Install Plugins
-4. Run it with `discord-bot [-e|-p|-t|--help]`
+4. Run it with `discord-bot [-t|--help]`
 5. Use the `help` command for a list of commands when the bot is running
 
 ### from GitHub (locally)
@@ -30,7 +30,7 @@ This is an extendable bot for Discord chats. By itself it does nothing, that's w
 3. Open a command prompt or terminal and navigate to the folder you cloned the repository to
 4. Run `npm install` from a command prompt or terminal
 5. Install Plugins
-6. Run the bot with `node app.js [-e|-p|-t|--help]`
+6. Run the bot with `node app.js [-t|--help]`
 7. Use the `help` command for a list of commands when the bot is running
 
 ## Install plugins
