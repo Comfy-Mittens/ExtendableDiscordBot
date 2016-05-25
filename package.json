@@ -10,7 +10,7 @@
     "cli-clear": "^1.0.4",
     "columnify": "^1.5.4",
     "commander": "^2.9.0",
-    "discord.io": "^1.8.1",
+    "discord.io": "^1.10.5",
     "node-persist": "0.0.8",
     "read": "^1.0.7",
     "request": "^2.72.0",
@@ -18,7 +18,7 @@
     "semver": "^5.1.0"
   },
   "description": "A plugin-based Bot for the Discord Chat Application",
-  "devDependencies": { },
+  "devDependencies": {},
   "homepage": "https://github.com/Wolvan/ExtendableDiscordBot#readme",
   "keywords": [
     "bot",
